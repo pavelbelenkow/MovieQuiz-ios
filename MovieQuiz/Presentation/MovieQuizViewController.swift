@@ -1,7 +1,7 @@
 import UIKit
 
 final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
-
+    
     // MARK: - Outlets
     
     @IBOutlet private var imageView: UIImageView!
@@ -17,12 +17,14 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     private let questionsAmount: Int = 10
     private var questionFactory: QuestionFactoryProtocol?
     private var currentQuestion: QuizQuestion?
+    private var alertPresenter: AlertPresenterProtocol?
     
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        alertPresenter = AlertPresenter(viewController: self)
         questionFactory = QuestionFactory(delegate: self)
         questionFactory?.requestNextQuestion()
     }
@@ -67,30 +69,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         textLabel.text = step.question
         counterLabel.text = step.questionNumber
     }
-    
-    private func show(quiz result: QuizResultsViewModel) {
-        let alert = UIAlertController(
-            title: result.title,
-            message: result.text,
-            preferredStyle: .alert)
         
-        let action = UIAlertAction(
-            title: result.buttonText,
-            style: .default,
-            handler: { [weak self] _ in
-                guard let self = self else { return }
-                
-                self.currentQuestionIndex = 0
-                self.correctAnswers = 0
-                self.questionFactory?.requestNextQuestion()
-            }
-        )
-        
-        alert.addAction(action)
-        
-        self.present(alert, animated: true, completion: nil)
-    }
-    
     private func convert(model: QuizQuestion) -> QuizStepViewModel {
         QuizStepViewModel(
             image: UIImage(named: model.image) ?? UIImage(),
@@ -123,12 +102,22 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     
     private func showNextQuestionOrResults() {
         if currentQuestionIndex == questionsAmount - 1 {
-            show(quiz: QuizResultsViewModel(
+            let alert = AlertModel(
                 title: "Этот раунд окончен!",
-                text: correctAnswers == questionsAmount ?
+                message: correctAnswers == questionsAmount ?
                 "Поздравляем, Вы ответили на \(questionsAmount) из \(questionsAmount)!" :
-                "Вы ответили на \(correctAnswers) из \(questionsAmount), попробуйте ещё раз!",
-                buttonText: "Сыграть ещё раз"))
+                    "Вы ответили на \(correctAnswers) из \(questionsAmount), попробуйте ещё раз!",
+                buttonText: "Сыграть ещё раз",
+                completion: { [weak self] in
+                    guard let self = self else { return }
+                    
+                    self.currentQuestionIndex = 0
+                    self.correctAnswers = 0
+                    self.questionFactory?.requestNextQuestion()
+                }
+            )
+            
+            alertPresenter?.showAlert(model: alert)
         } else {
             currentQuestionIndex += 1
             questionFactory?.requestNextQuestion()
