@@ -18,6 +18,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     private var questionFactory: QuestionFactoryProtocol?
     private var currentQuestion: QuizQuestion?
     private var alertPresenter: AlertPresenterProtocol?
+    private var statisticService: StatisticService?
     
     // MARK: - Lifecycle
     
@@ -26,6 +27,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         
         alertPresenter = AlertPresenter(viewController: self)
         questionFactory = QuestionFactory(delegate: self)
+        statisticService = StatisticServiceImplementation()
         questionFactory?.requestNextQuestion()
     }
     
@@ -102,11 +104,22 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     
     private func showNextQuestionOrResults() {
         if currentQuestionIndex == questionsAmount - 1 {
+            guard let statisticService = statisticService else {
+                return
+            }
+            
+            statisticService.store(correct: correctAnswers, total: questionsAmount)
+            
+            let alertMessage = """
+Ваш результат: \(correctAnswers) из \(questionsAmount)
+Количество сыгранных квизов: \(statisticService.gameCount)
+Рекорд: \(statisticService.bestGame.correct)/\(statisticService.bestGame.total) (\(statisticService.bestGame.date.dateTimeString))
+Средняя точность: \(String(format: "%.2f", statisticService.totalAccuracy))%
+"""
+            
             let alert = AlertModel(
                 title: "Этот раунд окончен!",
-                message: correctAnswers == questionsAmount ?
-                "Поздравляем, Вы ответили на \(questionsAmount) из \(questionsAmount)!" :
-                    "Вы ответили на \(correctAnswers) из \(questionsAmount), попробуйте ещё раз!",
+                message: alertMessage,
                 buttonText: "Сыграть ещё раз",
                 completion: { [weak self] in
                     guard let self = self else { return }
