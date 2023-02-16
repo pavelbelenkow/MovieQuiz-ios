@@ -60,7 +60,7 @@
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jby-8U-9r5">
                                         <rect key="frame" x="0.0" y="588.66666666666663" width="350" height="128"/>
                                         <subviews>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Рейтинг этого фильма меньше, чем 5?" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vaO-3s-crx" userLabel="Question Label">
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vaO-3s-crx" userLabel="Question Label">
                                                 <rect key="frame" x="42" y="13" width="266" height="102"/>
                                                 <fontDescription key="fontDescription" name="YSDisplay-Bold" family="YS Display" pointSize="23"/>
                                                 <color key="textColor" name="white"/>
@@ -120,16 +120,22 @@
                                     </stackView>
                                 </subviews>
                             </stackView>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="YNB-Sh-Y0v">
+                                <rect key="frame" x="185" y="412" width="20" height="20"/>
+                            </activityIndicatorView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" name="black"/>
                         <constraints>
+                            <constraint firstItem="YNB-Sh-Y0v" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="BtS-9W-1gx"/>
                             <constraint firstItem="sOI-Z8-vz7" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="JxG-o2-DQX"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="sOI-Z8-vz7" secondAttribute="trailing" constant="20" id="Q7a-on-HLH"/>
                             <constraint firstItem="sOI-Z8-vz7" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="10" id="a66-H8-ZIw"/>
+                            <constraint firstItem="YNB-Sh-Y0v" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="dcU-lQ-PtX"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="activityIndicator" destination="YNB-Sh-Y0v" id="6iU-2I-hMF"/>
                         <outlet property="counterLabel" destination="x2j-R4-VZj" id="cQg-Ng-Sx6"/>
                         <outlet property="imageView" destination="wN8-Vx-39W" id="AEb-vI-447"/>
                         <outlet property="noButton" destination="ReC-vY-58E" id="HsM-bF-8WW"/>
