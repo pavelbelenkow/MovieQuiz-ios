@@ -26,7 +26,7 @@ class QuestionFactory: QuestionFactoryProtocol {
                     self.movies = mostPopularMovies.items // сохраняем фильм в нашу новую переменную
                     self.delegate?.didLoadDataFromServer() // сообщаем, что данные загрузились
                 case .failure(let error):
-                    self.delegate?.didFailToLoadData(with: error) // сообщаем об ошибке нашему MovieQuizViewController
+                    self.delegate?.didFailToLoadData(with: error.localizedDescription) // сообщаем об ошибке нашему MovieQuizViewController
                 }
             }
         }
@@ -44,38 +44,38 @@ class QuestionFactory: QuestionFactoryProtocol {
             
             do {
                 imageData = try Data(contentsOf: movie.resizedImageURL)
-                
-                let rating = Float(movie.rating) ?? 0 // превращаем строку в число
-                let textNumber = Float.random(in: 8.0...9.2)
-                let roundedTextNumber = round(textNumber * 10) / 10.0
-                let randomCompareText = Compare.allCases.randomElement()!
-                
-                let text = "Рейтинг этого фильма \(randomCompareText.rawValue), чем \(roundedTextNumber)?"
-                
-                var correctAnswer: Bool {
-                    
-                    switch randomCompareText {
-                        case .more:
-                            return rating > roundedTextNumber
-                        case .less:
-                            return rating < roundedTextNumber
-                    }
-                }
-                
-                let question = QuizQuestion(image: imageData,
-                                            text: text,
-                                            correctAnswer: correctAnswer)
-                
-                DispatchQueue.main.async { [weak self] in
-                    guard let self = self else { return }
-                    self.delegate?.didReceiveNextQuestion(question: question)
-                }
             } catch {
                 DispatchQueue.main.async { [weak self] in
                     guard let self = self else { return }
-                    
-                    self.delegate?.didFailToLoadData(with: error)
+                    imageData = Data()
+                    self.delegate?.didFailToLoadData(with: error.localizedDescription)
                 }
+            }
+            
+            let rating = Float(movie.rating) ?? 0 // превращаем строку в число
+            let textNumber = Float.random(in: 8.0...9.2)
+            let roundedTextNumber = round(textNumber * 10) / 10.0
+            let randomCompareText = Compare.allCases.randomElement()!
+            
+            let text = "Рейтинг этого фильма \(randomCompareText.rawValue), чем \(roundedTextNumber)?"
+            
+            var correctAnswer: Bool {
+                
+                switch randomCompareText {
+                    case .more:
+                        return rating > roundedTextNumber
+                    case .less:
+                        return rating < roundedTextNumber
+                }
+            }
+            
+            let question = QuizQuestion(image: imageData,
+                                        text: text,
+                                        correctAnswer: correctAnswer)
+            
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
+                self.delegate?.didReceiveNextQuestion(question: question)
             }
         }
     }
