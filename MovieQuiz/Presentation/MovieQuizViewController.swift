@@ -1,6 +1,6 @@
 import UIKit
 
-final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
+final class MovieQuizViewController: UIViewController {
     
     // MARK: - Outlets
     
@@ -33,30 +33,6 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         questionFactory?.loadData()
     }
     
-    // MARK: - QuestionFactoryDelegate
-    
-    func didReceiveNextQuestion(question: QuizQuestion?) {
-        guard let question = question else {
-            return
-        }
-        
-        currentQuestion = question
-        let viewModel = convert(model: question)
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
-            self.show(quiz: viewModel)
-        }
-    }
-    
-    func didLoadDataFromServer() {
-        activityIndicator.stopAnimating()
-        questionFactory?.requestNextQuestion() // показываем первый вопрос
-    }
-    
-    func didFailToLoadData(with error: Error) {
-        showNetworkError(message: error.localizedDescription) // возьмём в качестве сообщения описание ошибки
-    }
-    
     // MARK: - Actions
     
     @IBAction private func yesButtonClicked(_ sender: UIButton) {
@@ -87,9 +63,8 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         ) { [ weak self ] in
             guard let self = self else { return }
             
-            self.currentQuestionIndex = 0
-            self.correctAnswers = 0
-            self.questionFactory?.requestNextQuestion()
+            self.activityIndicator.startAnimating()
+            self.questionFactory?.loadData()
         }
         
         alertPresenter?.showAlert(model: alert)
@@ -167,3 +142,30 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         }
     }
 }
+
+extension MovieQuizViewController: QuestionFactoryDelegate {
+    
+    // MARK: - QuestionFactoryDelegate
+    
+    func didReceiveNextQuestion(question: QuizQuestion?) {
+        guard let question = question else {
+            return
+        }
+        
+        currentQuestion = question
+        let viewModel = convert(model: question)
+        DispatchQueue.main.async { [weak self] in
+            self?.show(quiz: viewModel)
+        }
+    }
+    
+    func didLoadDataFromServer() {
+        activityIndicator.stopAnimating()
+        questionFactory?.requestNextQuestion() // показываем первый вопрос
+    }
+    
+    func didFailToLoadData(with error: String) {
+        showNetworkError(message: error) // возьмём в качестве сообщения описание ошибки
+    }
+}
+
