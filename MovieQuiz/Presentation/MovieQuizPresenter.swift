@@ -6,7 +6,7 @@ final class MovieQuizPresenter {
     
     private var questionFactory: QuestionFactoryProtocol?
     private var statisticService: StatisticService?
-    private weak var viewController: MovieQuizViewController?
+    private weak var viewController: MovieQuizViewControllerProtocol?
     
     private var currentQuestion: QuizQuestion?
     private let questionsAmount: Int = 10
@@ -15,7 +15,7 @@ final class MovieQuizPresenter {
     
     // MARK: - Presenter Initializers
     
-    init(viewController: MovieQuizViewController) {
+    init(viewController: MovieQuizViewControllerProtocol = MovieQuizViewController()) {
         self.viewController = viewController
         
         questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
