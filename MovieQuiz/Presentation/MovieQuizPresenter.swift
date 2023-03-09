@@ -27,7 +27,7 @@ final class MovieQuizPresenter {
     
     // MARK: - Presenter Functions
     
-    private func convert(model: QuizQuestion) -> QuizStepViewModel {
+    func convert(model: QuizQuestion) -> QuizStepViewModel {
         
         QuizStepViewModel(
             image: UIImage(data: model.image) ?? UIImage(),
