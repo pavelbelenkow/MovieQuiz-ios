@@ -60,7 +60,6 @@ final class QuestionFactory: QuestionFactoryProtocol {
             let text = "Рейтинг этого фильма \(randomCompareText.rawValue), чем \(roundedTextNumber)?"
             
             var correctAnswer: Bool {
-                
                 switch randomCompareText {
                     case .more:
                         return rating > roundedTextNumber

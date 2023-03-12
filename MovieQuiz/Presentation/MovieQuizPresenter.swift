@@ -28,7 +28,6 @@ final class MovieQuizPresenter {
     // MARK: - Presenter Functions
     
     func convert(model: QuizQuestion) -> QuizStepViewModel {
-        
         QuizStepViewModel(
             image: UIImage(data: model.image) ?? UIImage(),
             question: model.text,
@@ -39,7 +38,6 @@ final class MovieQuizPresenter {
     // MARK: - Answer handling functions
     
     private func didAnswer(isYes: Bool) {
-        
         guard let currentQuestion = currentQuestion else { return }
         
         let givenAnswer = isYes
@@ -54,7 +52,6 @@ final class MovieQuizPresenter {
     }
     
     private func proceedWithAnswer(isCorrect: Bool) {
-        
         didAnswer(isCorrectAnswer: isCorrect)
         
         viewController?.highlightImageBorder(isCorrectAnswer: isCorrect)
@@ -84,9 +81,7 @@ final class MovieQuizPresenter {
     }
     
     private func proceedToNextQuestionOrResults() {
-        
         if self.isLastQuestion() {
-            
             guard let statisticService = statisticService else { return }
             
             statisticService.store(correct: correctAnswers, total: questionsAmount)
@@ -104,14 +99,12 @@ final class MovieQuizPresenter {
                 buttonText: "Сыграть ещё раз",
                 completion: { [weak self] in
                     guard let self = self else { return }
-                    
                     self.restartGame()
                 }
             )
             
             viewController?.showQuizResults(model: alert)
         } else {
-            
             self.switchToNextQuestion()
             questionFactory?.requestNextQuestion()
         }
@@ -137,7 +130,6 @@ extension MovieQuizPresenter: QuestionFactoryDelegate {
     // MARK: - QuestionFactoryDelegate
     
     func didReceiveNextQuestion(question: QuizQuestion?) {
-        
         guard let question = question else { return }
         
         currentQuestion = question
