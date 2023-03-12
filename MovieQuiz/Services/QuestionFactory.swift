@@ -1,6 +1,6 @@
 import Foundation
 
-class QuestionFactory: QuestionFactoryProtocol {
+final class QuestionFactory: QuestionFactoryProtocol {
     
     private enum Compare: String, CaseIterable {
         case more = "больше"
@@ -60,7 +60,6 @@ class QuestionFactory: QuestionFactoryProtocol {
             let text = "Рейтинг этого фильма \(randomCompareText.rawValue), чем \(roundedTextNumber)?"
             
             var correctAnswer: Bool {
-                
                 switch randomCompareText {
                     case .more:
                         return rating > roundedTextNumber
