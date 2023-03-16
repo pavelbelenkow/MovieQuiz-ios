@@ -37,12 +37,14 @@ final class MovieQuizPresenter {
     
     // MARK: - Answer handling functions
     
-    private func didAnswer(isYes: Bool) {
-        guard let currentQuestion = currentQuestion else { return }
+    private func didAnswer(isYes: Bool) -> Bool {
+        guard let currentQuestion = currentQuestion else { return Bool() }
         
         let givenAnswer = isYes
         
         proceedWithAnswer(isCorrect: givenAnswer == currentQuestion.correctAnswer)
+        
+        return givenAnswer == currentQuestion.correctAnswer
     }
     
     private func didAnswer(isCorrectAnswer: Bool) {
@@ -112,11 +114,11 @@ final class MovieQuizPresenter {
     
     // MARK: - Functions to call in View
     
-    func yesButtonClicked() {
+    func yesButtonClicked() -> Bool {
         didAnswer(isYes: true)
     }
     
-    func noButtonClicked() {
+    func noButtonClicked() -> Bool {
         didAnswer(isYes: false)
     }
     

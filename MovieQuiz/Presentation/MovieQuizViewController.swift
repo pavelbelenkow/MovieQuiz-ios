@@ -15,12 +15,11 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
 
     private var presenter: MovieQuizPresenter?
     private var alertPresenter: AlertPresenterProtocol?
+    private var feedbackGenerator = UINotificationFeedbackGenerator()
     
     // MARK: - Overridden properties
     
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
-    }
+    override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
     
     // MARK: - Lifecycle
     
@@ -34,11 +33,15 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
     // MARK: - Actions
     
     @IBAction private func yesButtonClicked(_ sender: UIButton) {
-        presenter?.yesButtonClicked()
+        guard presenter?.yesButtonClicked() == true else {
+            return shake(element: yesButton)
+        }
     }
     
     @IBAction private func noButtonClicked(_ sender: UIButton) {
-        presenter?.noButtonClicked()
+        guard presenter?.noButtonClicked() == true else {
+            return shake(element: noButton)
+        }
     }
     
     // MARK: - Functions
@@ -55,6 +58,12 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
     }
     
     func highlightImageBorder(isCorrectAnswer: Bool) {
+        if isCorrectAnswer {
+            feedbackGenerator.notificationOccurred(.success)
+        } else {
+            feedbackGenerator.notificationOccurred(.error)
+        }
+        
         imageView.layer.masksToBounds = true
         imageView.layer.borderWidth = 8
         imageView.layer.cornerRadius = 20
@@ -74,6 +83,16 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
     
     func hideLoadingIndicator() {
         activityIndicator.stopAnimating()
+    }
+    
+    func shake(element: UIButton) {
+        let animation = CAKeyframeAnimation(keyPath: "transform.translation.x")
+
+        animation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.linear)
+        animation.duration = 0.5
+        animation.values = [-10.0, 10.0, -10.0, 10.0, -6.0, 6.0, -3.0, 3.0, 0.0]
+
+        element.layer.add(animation, forKey: "shake")
     }
     
     func showNetworkError(message: String) {
